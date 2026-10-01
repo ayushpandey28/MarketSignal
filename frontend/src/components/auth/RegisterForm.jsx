@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Button from '../common/Button.jsx';
 import ErrorMessage from '../common/ErrorMessage.jsx';
 import { useAuth } from '../../hooks/useAuth.js';
@@ -16,6 +16,17 @@ export default function RegisterForm() {
   });
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [countryOpen, setCountryOpen] = useState(false);
+  const countryRef = useRef(null);
+
+  useEffect(() => {
+    function closeCountryMenu(event) {
+      if (!countryRef.current?.contains(event.target)) setCountryOpen(false);
+    }
+
+    document.addEventListener('mousedown', closeCountryMenu);
+    return () => document.removeEventListener('mousedown', closeCountryMenu);
+  }, []);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -59,11 +70,38 @@ export default function RegisterForm() {
 
       <div className="form-group">
         <label htmlFor="register-region" className="form-label">Country</label>
-        <select id="register-region" className="form-select" value={form.region} onChange={(e) => setForm({ ...form, region: e.target.value })}>
-          {REGION_OPTIONS.map((r) => (
-            <option key={r}>{r}</option>
-          ))}
-        </select>
+        <div className="country-dropdown" ref={countryRef}>
+          <button
+            id="register-region"
+            type="button"
+            className="country-dropdown__trigger"
+            aria-haspopup="listbox"
+            aria-expanded={countryOpen}
+            onClick={() => setCountryOpen((open) => !open)}
+          >
+            <span>{form.region}</span>
+            <span className="country-dropdown__arrow" aria-hidden="true">▾</span>
+          </button>
+          {countryOpen && (
+            <div className="country-dropdown__menu" role="listbox" aria-labelledby="register-region">
+              {REGION_OPTIONS.map((region) => (
+                <button
+                  key={region}
+                  type="button"
+                  role="option"
+                  aria-selected={form.region === region}
+                  className={`country-dropdown__option ${form.region === region ? 'is-selected' : ''}`}
+                  onClick={() => {
+                    setForm({ ...form, region });
+                    setCountryOpen(false);
+                  }}
+                >
+                  {region}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {form.role === 'seller' && (
