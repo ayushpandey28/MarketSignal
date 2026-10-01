@@ -5,9 +5,13 @@ function notFound(req, res, next) {
 }
 
 function errorHandler(err, req, res, next) {
-  const statusCode = err.statusCode || 500;
+  const statusCode = err.statusCode || (err.code === 'LIMIT_FILE_SIZE' ? 400 : 500);
   const message =
-    statusCode === 500 ? 'Something went wrong' : err.message || 'Request failed';
+    err.code === 'LIMIT_FILE_SIZE'
+      ? 'Image must be 2 MB or smaller'
+      : statusCode === 500
+        ? 'Something went wrong'
+        : err.message || 'Request failed';
 
   res.status(statusCode).json({
     success: false,

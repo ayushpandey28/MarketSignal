@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
@@ -21,8 +20,6 @@ app.use(
   })
 );
 app.use(express.json({ limit: '1mb' }));
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
 app.get('/api/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok' } });
 });

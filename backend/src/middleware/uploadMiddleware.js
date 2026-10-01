@@ -1,19 +1,6 @@
-const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 
-const uploadDir = path.join(__dirname, '../../uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname || '').toLowerCase();
-    cb(null, `${Date.now()}-${Math.round(Math.random() * 1e6)}${ext}`);
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage,
@@ -21,7 +8,9 @@ const upload = multer({
   fileFilter: (_req, file, cb) => {
     const allowed = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.mimetype)) {
-      return cb(new Error('Only JPEG, PNG, and WebP images are allowed'));
+      const error = new Error('Only JPEG, PNG, and WebP images are allowed');
+      error.statusCode = 400;
+      return cb(error);
     }
     cb(null, true);
   },

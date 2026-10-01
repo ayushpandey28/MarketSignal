@@ -7,6 +7,7 @@ const PriceAlert = require('../models/PriceAlert');
 const DemandSignal = require('../models/DemandSignal');
 const { asyncHandler } = require('../middleware/errorMiddleware');
 const { refreshProductDemand } = require('../services/demandEngine');
+const { uploadImage } = require('../config/cloudinary');
 
 function validateProductId(id) {
   if (!mongoose.isValidObjectId(id)) {
@@ -139,6 +140,9 @@ exports.createProduct = asyncHandler(async (req, res) => {
     throw error;
   }
 
+  const imageUrl = req.file
+    ? await uploadImage(req.file.buffer)
+    : req.body.imageUrl || '';
   const payload = {
     name,
     description: req.body.description,
@@ -149,7 +153,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
     region: req.body.region || req.user.region,
     competition,
     seller: seller?._id,
-    imageUrl: req.file ? `/uploads/${req.file.filename}` : req.body.imageUrl || '',
+    imageUrl,
     isDemo: false,
   };
 
@@ -227,7 +231,7 @@ exports.updateProduct = asyncHandler(async (req, res) => {
     }
     product.stock = stock;
   }
-  if (req.file) product.imageUrl = `/uploads/${req.file.filename}`;
+  if (req.file) product.imageUrl = await uploadImage(req.file.buffer);
 
   await product.save();
 
