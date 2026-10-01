@@ -1,5 +1,5 @@
 import { AreaChart as Chart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-
+//this is for area chart
 export default function AreaChart({ data }) {
   return (
     <div className="h-56">
