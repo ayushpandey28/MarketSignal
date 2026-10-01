@@ -5,8 +5,13 @@ const getStoredToken = () => {
   return token || '';
 };
 
+const configuredApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const apiBaseUrl = configuredApiUrl.replace(/\/+$/, '').endsWith('/api')
+  ? configuredApiUrl.replace(/\/+$/, '')
+  : `${configuredApiUrl.replace(/\/+$/, '')}/api`;
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: apiBaseUrl,
 });
 
 api.interceptors.request.use((config) => {
