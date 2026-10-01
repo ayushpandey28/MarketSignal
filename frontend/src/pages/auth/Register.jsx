@@ -5,7 +5,10 @@ import { useAuth } from '../../hooks/useAuth.js';
 
 export default function Register() {
   const { user } = useAuth();
-  if (user) return <Navigate to="/app" replace />;
+  if (user) {
+    const destination = user.role === 'seller' ? '/seller' : user.role === 'admin' ? '/admin' : '/app';
+    return <Navigate to={destination} replace />;
+  }
 
   return (
     <div>

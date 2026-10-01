@@ -37,7 +37,11 @@ export default function ProductDetails({ product, demand }) {
 
       <div className="detail-sidebar">
         <div className="card panel">
-          <DemandScore score={overall.currentScore || product.demandScore || 0} large />
+          <DemandScore
+            score={overall.currentScore || product.demandScore || 0}
+            trend={overall.trend || product.trend}
+            large
+          />
           <div className="panel-metrics">
             <div>
               <span className="muted small">Trend</span>
