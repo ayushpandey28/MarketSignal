@@ -141,7 +141,7 @@ exports.createProduct = asyncHandler(async (req, res) => {
   }
 
   const imageUrl = req.file
-    ? await uploadImage(req.file.buffer)
+    ? await uploadImage(req.file)
     : req.body.imageUrl || '';
   const payload = {
     name,
@@ -231,7 +231,7 @@ exports.updateProduct = asyncHandler(async (req, res) => {
     }
     product.stock = stock;
   }
-  if (req.file) product.imageUrl = await uploadImage(req.file.buffer);
+  if (req.file) product.imageUrl = await uploadImage(req.file);
 
   await product.save();
 
