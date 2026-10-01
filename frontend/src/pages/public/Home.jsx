@@ -6,15 +6,20 @@ import { useFetch } from '../../hooks/useFetch.js';
 import { demandService } from '../../services/demandService.js';
 import ProductImage from '../../components/products/ProductImage.jsx';
 
-const metrics = [
-  { label: 'Demand score', value: '342', icon: TrendingUp },
-  { label: 'Growth', value: '+62%', icon: BarChart3 },
-  { label: 'Interested users', value: '1.4K', icon: Users },
-  { label: 'Regional pull', value: 'US +24%', icon: MapPinned },
-];
-
 export default function Home() {
   const { data: trending } = useFetch(() => demandService.trending({ limit: 4 }), []);
+  const products = trending || [];
+  const highestDemand = products[0]?.demandScore || 0;
+  const averageGrowth = products.length
+    ? products.reduce((total, item) => total + Number(item.growthPercent || 0), 0) / products.length
+    : 0;
+  const risingProducts = products.filter((item) => item.trend === 'rising').length;
+  const metrics = [
+    { label: 'Highest demand', value: Math.round(highestDemand), icon: TrendingUp },
+    { label: 'Average growth', value: `${averageGrowth >= 0 ? '+' : ''}${averageGrowth.toFixed(1)}%`, icon: BarChart3 },
+    { label: 'Products shown', value: products.length, icon: Users },
+    { label: 'Rising signals', value: risingProducts, icon: MapPinned },
+  ];
 
   return (
     <div>
@@ -53,10 +58,10 @@ export default function Home() {
           <div className="card preview-card">
             <div className="panel-header">
               <span className="panel-label">Market pulse</span>
-              <span className="status-dot">Live</span>
+              <span className="status-dot">Current sample</span>
             </div>
             <div className="pulse-list">
-              {(trending || []).map((item) => (
+              {products.map((item) => (
                 <div key={item.product._id} className="pulse-row">
                   <div className="pulse-item__left">
                     <ProductImage product={item.product} alt={item.product.name} className="pulse-thumb" />
@@ -101,7 +106,7 @@ export default function Home() {
           </div>
 
           <div className="mini-product-grid">
-            {(trending || []).map((item) => (
+            {products.map((item) => (
               <Link key={item.product._id} to={`/products/${item.product._id}`} className="mini-card card">
                 <ProductImage product={item.product} alt={item.product.name} className="mini-card__image" />
                 <div className="mini-card__body">

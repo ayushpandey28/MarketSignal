@@ -1,11 +1,13 @@
-export default function DemandScore({ score = 0, large = false }) {
+export default function DemandScore({ score = 0, trend: trendValue, large = false }) {
   const value = Math.round(score || 0);
   const safeValue = Math.min(Math.max(value, 0), 500);
   const max = 500;
   const radius = 32;
   const circumference = 2 * Math.PI * radius;
   const progress = (safeValue / max) * circumference;
-  const trend = safeValue >= 300 ? 'Rising' : safeValue >= 180 ? 'Stable' : 'Declining';
+  const trend = trendValue || (safeValue >= 300 ? 'rising' : safeValue >= 180 ? 'stable' : 'declining');
+  const trendLabel = trend.charAt(0).toUpperCase() + trend.slice(1);
+  const trendColor = trend === 'rising' ? '#34d399' : trend === 'declining' ? '#f87171' : '#38bdf8';
 
   return (
     <div className="flex items-center gap-3">
@@ -16,7 +18,7 @@ export default function DemandScore({ score = 0, large = false }) {
             cx="40"
             cy="40"
             r={radius}
-            stroke={safeValue >= 300 ? '#34d399' : safeValue >= 180 ? '#38bdf8' : '#f87171'}
+            stroke={trendColor}
             strokeWidth="8"
             fill="none"
             strokeLinecap="round"
@@ -29,7 +31,7 @@ export default function DemandScore({ score = 0, large = false }) {
       </div>
       <div>
         <p className="text-[10px] uppercase tracking-[0.2em] text-slate-400">Demand score</p>
-        <p className={large ? 'text-xl font-semibold text-white' : 'text-sm font-medium text-white'}>{trend}</p>
+        <p className={large ? 'text-xl font-semibold text-white' : 'text-sm font-medium text-white'}>{trendLabel}</p>
       </div>
     </div>
   );

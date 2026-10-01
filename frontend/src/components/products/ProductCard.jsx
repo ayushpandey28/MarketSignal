@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { formatPrice } from '../../utils/formatPrice.js';
 import ProductImage from './ProductImage.jsx';
 import DemandScore from '../demand/DemandScore.jsx';
@@ -18,9 +18,6 @@ export default function ProductCard({ product }) {
             <p className="product-card__brand">{product.brand}</p>
             <h3>{product.name}</h3>
           </div>
-          <button className="icon-button" type="button" aria-label={`Save ${product.name}`} onClick={(e) => e.preventDefault()}>
-            <Heart size={14} />
-          </button>
         </div>
 
         <div className="product-card__meta">
@@ -30,7 +27,7 @@ export default function ProductCard({ product }) {
 
         <div className="product-card__price-row">
           <span className="price">{formatPrice(product.price)}</span>
-          <DemandScore score={product.demandScore || 0} />
+          <DemandScore score={product.demandScore || 0} trend={product.trend} />
         </div>
 
         <div className="product-card__stats">

@@ -2,22 +2,17 @@ import { ArrowRight, BarChart3, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/common/Navbar.jsx';
 import Footer from '../../components/common/Footer.jsx';
-
-const highlights = [
-  { label: 'Trending products', value: 'Mechanical Keyboard', change: '+62%' },
-  { label: 'Fastest rising', value: 'Noise Cancel Headset', change: '+35%' },
-  { label: 'Top category', value: 'Electronics', change: 'High demand' },
-  { label: 'Regional trend', value: 'United States', change: '+24%' },
-];
-
-const categories = [
-  { name: 'Electronics', score: 342 },
-  { name: 'Gaming', score: 311 },
-  { name: 'Smart Home', score: 280 },
-  { name: 'Travel', score: 197 },
-];
+import { useFetch } from '../../hooks/useFetch.js';
+import { demandService } from '../../services/demandService.js';
 
 export default function Insights() {
+  const { data: trendingData, loading: trendingLoading } = useFetch(() => demandService.trending({ limit: 4 }), []);
+  const { data: categoriesData, loading: categoriesLoading } = useFetch(() => demandService.categories(), []);
+  const trending = trendingData || [];
+  const categories = categoriesData || [];
+  const topCategory = categories[0];
+  const maxScore = Math.max(...categories.map((item) => item.demandScore || 0), 1);
+
   return (
     <div>
       <Navbar />
@@ -31,7 +26,12 @@ export default function Insights() {
         </section>
 
         <section className="grid-4">
-          {highlights.map(({ label, value, change }) => (
+          {[
+            { label: 'Trending products', value: trending[0]?.product?.name || 'No data yet', change: trending[0] ? `${trending[0].growthPercent >= 0 ? '+' : ''}${trending[0].growthPercent}%` : '' },
+            { label: 'Fastest rising', value: trending[1]?.product?.name || 'No data yet', change: trending[1] ? `${trending[1].growthPercent >= 0 ? '+' : ''}${trending[1].growthPercent}%` : '' },
+            { label: 'Top category', value: topCategory?.category || 'No data yet', change: topCategory ? `${Math.round(topCategory.demandScore)} demand` : '' },
+            { label: 'Products with data', value: categories.reduce((total, item) => total + (item.count || 0), 0), change: 'Observed sample' },
+          ].map(({ label, value, change }) => (
             <div key={label} className="card feature-card insight-card">
               <span className="muted small">{label}</span>
               <h3>{value}</h3>
@@ -47,14 +47,14 @@ export default function Insights() {
               <span>Category momentum</span>
             </div>
             <div className="bars-list">
-              {categories.map(({ name, score }) => (
-                <div key={name} className="bar-row">
+              {categoriesLoading ? <p className="muted">Loading category data...</p> : categories.map((item) => (
+                <div key={item.category} className="bar-row">
                   <div className="bar-row__meta">
-                    <span>{name}</span>
-                    <strong>{score}</strong>
+                    <span>{item.category}</span>
+                    <strong>{Math.round(item.demandScore || 0)}</strong>
                   </div>
                   <div className="bar-track">
-                    <span style={{ width: `${(score / 360) * 100}%` }} />
+                    <span style={{ width: `${((item.demandScore || 0) / maxScore) * 100}%` }} />
                   </div>
                 </div>
               ))}
@@ -67,10 +67,9 @@ export default function Insights() {
               <span>Fastest rising products</span>
             </div>
             <ul className="plain-list">
-              <li><strong>Mechanical Keyboard</strong><span>+62%</span></li>
-              <li><strong>Noise Cancel Headset</strong><span>+35%</span></li>
-              <li><strong>Smart LED Strip</strong><span>+28%</span></li>
-              <li><strong>USB-C Docking Station</strong><span>+22%</span></li>
+              {trendingLoading ? <li>Loading product data...</li> : trending.map((item) => (
+                <li key={item.product._id}><strong>{item.product.name}</strong><span>{item.growthPercent >= 0 ? '+' : ''}{item.growthPercent}%</span></li>
+              ))}
             </ul>
           </div>
         </section>
