@@ -9,6 +9,7 @@ const alertRoutes = require('./routes/alertRoutes');
 const sellerRoutes = require('./routes/sellerRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const { connectDb } = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -22,6 +23,15 @@ app.use(
 app.use(express.json({ limit: '1mb' }));
 app.get('/api/health', (_req, res) => {
   res.json({ success: true, data: { status: 'ok' } });
+});
+
+app.use('/api', async (req, res, next) => {
+  try {
+    await connectDb();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use('/api/auth', authRoutes);

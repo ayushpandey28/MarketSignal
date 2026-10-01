@@ -5,6 +5,13 @@ function notFound(req, res, next) {
 }
 
 function errorHandler(err, req, res, next) {
+  console.error('[API error]', {
+    method: req.method,
+    path: req.originalUrl,
+    name: err.name,
+    code: err.code,
+    message: err.message,
+  });
   const statusCode = err.statusCode || (err.code === 'LIMIT_FILE_SIZE' ? 400 : 500);
   const message =
     err.code === 'LIMIT_FILE_SIZE'
