@@ -13,6 +13,7 @@ const { connectDb } = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
+app.set('trust proxy', 1);
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:5173',
