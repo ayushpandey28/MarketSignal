@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 
+const API_ROOT = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+
 const FALLBACKS = {
   'Mechanical Keyboard 75%': 'https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&w=900&q=80',
   'Noise Cancel Headset': 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=80',
@@ -21,10 +23,11 @@ export default function ProductImage({ product, alt, className = '' }) {
     if (product?.name && FALLBACKS[product.name]) return FALLBACKS[product.name];
     return FALLBACKS.default;
   }, [product]);
+  const resolvedSource = source?.startsWith('/') ? `${API_ROOT}${source}` : source;
 
   const [broken, setBroken] = useState(false);
 
-  if (!source || broken) {
+  if (!resolvedSource || broken) {
     return (
       <div className={`product-image fallback ${className}`} aria-label={alt || 'Product image'}>
         <span>{product?.category || 'MarketSignal'}</span>
@@ -34,7 +37,7 @@ export default function ProductImage({ product, alt, className = '' }) {
 
   return (
     <img
-      src={source}
+      src={resolvedSource}
       alt={alt || product?.name || 'Product'}
       className={`product-image ${className}`}
       loading="lazy"

@@ -1,4 +1,7 @@
 const cloudinary = require('cloudinary').v2;
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -26,9 +29,22 @@ function uploadImage(file) {
 
     const stream = cloudinary.uploader.upload_stream(
       { folder: 'marketsignal/products', resource_type: 'image' },
-      (error, result) => {
+      async (error, result) => {
         if (error || !result?.secure_url) {
           console.error('[Cloudinary] Upload failed:', error?.message || 'No secure URL returned');
+          if (process.env.NODE_ENV !== 'production') {
+            try {
+              const extensions = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp' };
+              const filename = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}${extensions[file.mimetype]}`;
+              const uploadDirectory = path.join(__dirname, '../../uploads');
+              await fs.promises.mkdir(uploadDirectory, { recursive: true });
+              await fs.promises.writeFile(path.join(uploadDirectory, filename), buffer, { flag: 'wx' });
+              console.warn('[Uploads] Saved image locally because Cloudinary is unavailable.');
+              return resolve(`/uploads/${filename}`);
+            } catch (localError) {
+              console.error('[Uploads] Local image save failed:', localError.message);
+            }
+          }
           const uploadError = new Error('Image upload failed');
           uploadError.statusCode = 502;
           return reject(uploadError);
