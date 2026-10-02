@@ -466,7 +466,7 @@ frontend/.env
 Example:
 
 ```env
-VITE_API_URL=http://localhost:5000/api/v1
+VITE_API_URL=http://localhost:5000/api
 ```
 
 Start the frontend:
@@ -480,6 +480,8 @@ Frontend will normally run on:
 ```text
 http://localhost:5173
 ```
+
+Product images are stored by the backend in `backend/uploads/products` and served from `/uploads`. This local disk storage is suitable for local development and self-hosted servers. Vercel serverless filesystems are ephemeral, so uploaded files are not guaranteed to persist there. Product creation and updates continue to work without an image.
 
 ---
 

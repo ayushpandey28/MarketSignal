@@ -1,15 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SellerShell from './SellerShell.jsx';
 import { useFetch } from '../../hooks/useFetch.js';
 import { sellerService } from '../../services/sellerService.js';
 import { productService } from '../../services/productService.js';
 import Button from '../../components/common/Button.jsx';
 import Loading from '../../components/common/Loading.jsx';
+import ProductImage from '../../components/products/ProductImage.jsx';
 import { formatPrice } from '../../utils/formatPrice.js';
 import { REGION_OPTIONS } from '../../constants/regions.js';
 import { Pencil, Package, Trash2, X } from 'lucide-react';
-
-const API_ROOT = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
 
 const empty = {
   name: '',
@@ -27,8 +26,19 @@ export default function SellerProducts() {
   const [form, setForm] = useState(empty);
   const [editing, setEditing] = useState(null);
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (!image) {
+      setImagePreview('');
+      return undefined;
+    }
+    const previewUrl = URL.createObjectURL(image);
+    setImagePreview(previewUrl);
+    return () => URL.revokeObjectURL(previewUrl);
+  }, [image]);
 
   async function save(e) {
     e.preventDefault();
@@ -184,6 +194,7 @@ export default function SellerProducts() {
             <label className="seller-product-field">
               <span>Product image <small>Optional · JPEG, PNG or WebP · up to 2 MB</small></span>
               <input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setImage(e.target.files[0] || null)} />
+              {imagePreview && <img className="seller-product-image" src={imagePreview} alt="Selected product preview" />}
             </label>
             <label className="seller-product-field is-wide">
               <span>Description</span>
@@ -208,15 +219,12 @@ export default function SellerProducts() {
             <div className="seller-product-grid">
               {data.map((product) => (
                 <article className="card seller-product-card" key={product._id}>
-                  {product.imageUrl ? (
-                    <img
-                      className="seller-product-image"
-                      src={product.imageUrl.startsWith('http') ? product.imageUrl : `${API_ROOT}${product.imageUrl}`}
-                      alt={product.name}
-                    />
-                  ) : (
-                    <div className="seller-product-image-placeholder"><Package size={22} /></div>
-                  )}
+                  <ProductImage
+                    key={`${product._id}-${product.imageUrl}`}
+                    product={product}
+                    alt={product.name}
+                    className="seller-product-image"
+                  />
                   <div className="seller-product-card-body">
                     <div className="seller-product-card-title">
                       <div>
