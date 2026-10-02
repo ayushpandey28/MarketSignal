@@ -1,7 +1,9 @@
 MarketSignal 📊
+
 What Are People About to Buy?
 MarketSignal is a full-stack consumer demand intelligence platform that identifies emerging product demand using consumer activity such as searches, product views, wishlists, price alerts, and interest requests.
 The platform converts these early consumer signals into a measurable Demand Score, growth percentage, and market trend that can be useful for consumers, sellers, and administrators.
+
 🚀 Features
 👤 Consumer Features
 - User registration and login
