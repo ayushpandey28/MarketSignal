@@ -1,17 +1,48 @@
-MarketSignal 📊
+# MarketSignal 📊
 
-What Are People About to Buy?
-MarketSignal is a full-stack consumer demand intelligence platform that identifies emerging product demand using consumer activity such as searches, product views, wishlists, price alerts, and interest requests.
-The platform converts these early consumer signals into a measurable Demand Score, growth percentage, and market trend that can be useful for consumers, sellers, and administrators.
+## What Are People About to Buy?
 
-🚀 Features
-👤 Consumer Features
+MarketSignal is a full-stack consumer demand intelligence platform that analyzes user activity to identify emerging product demand.
+
+Instead of relying only on completed sales, MarketSignal uses early consumer signals such as:
+
+- Searches
+- Product Views
+- Wishlists
+- Price Alerts
+- Interest Requests
+
+These signals are converted into a **Demand Score**, **Growth Percentage**, and **Trend Classification** to help consumers, sellers, and administrators understand changing product interest.
+
+---
+
+## 🚀 Live Demo
+
+### Frontend
+https://market-signal-twentyeight.vercel.app
+
+### Backend API
+https://market-signal-backend.vercel.app
+
+### API Health Check
+https://market-signal-backend.vercel.app/api/health
+
+### GitHub Repository
+https://github.com/ayushpandey28/MarketSignal
+
+---
+
+# ✨ Features
+
+## 👤 Consumer
+
 - User registration and login
-- Secure authentication using JWT
+- JWT authentication
 - Browse products
 - Search products
-- Filter products by category and region
-- View detailed product information
+- Filter products by category
+- Filter products by region
+- View product details
 - Add products to wishlist
 - Create price alerts
 - Show interest in products
@@ -19,64 +50,73 @@ The platform converts these early consumer signals into a measurable Demand Scor
 - View regional demand
 - View category demand
 - View product demand trends
-- Ask AI for product and market insights
-- Manage user profile
-🏪 Seller Features
+- View demand analytics
+- Ask Gemini AI for product and market insights
+- Manage profile
+
+---
+
+## 🏪 Seller
+
 - Seller registration and login
 - Seller dashboard
+- Add products
+- Edit products
+- Delete products
+- Manage product information
+- Manage inventory
 - View high-demand products
-- Market opportunity insights
-- Inventory management
-- Seller product management
-- Demand analytics
-- Regional demand analysis
-- Category-wise demand analysis
-- Product demand trends
+- View trending products
 - View demand growth
-- Ask AI for market insights
-🛠️ Admin Features
+- View regional demand
+- View category demand
+- View product demand trends
+- View market opportunities
+- Ask Gemini AI for market insights
+
+---
+
+## 🛠️ Admin
+
 - Admin dashboard
 - Manage users
 - Manage products
 - Manage categories
 - View platform analytics
 - Monitor demand signals
+- View demand trends
 - Manage platform data
-🤖 AI Features
-MarketSignal integrates Google Gemini through the backend for optional AI-powered analysis.
-AI can be used for:
-- Product demand explanations
-- Market insights
-- Trend explanations
-- Seller opportunity analysis
-- Consumer questions
-- Market reports
-AI is an additional analysis layer and is not responsible for calculating the core Demand Score.
-The core application continues to work even when the AI service is unavailable.
-📈 Demand Signal System
-MarketSignal uses different consumer activities as demand signals.
-Signal	Weight
-Search	1
-Product View	2
-Wishlist	4
-Price Alert	5
-Interest	7
 
+---
 
-Demand Score Formula
+# 📈 Demand Signal System
+
+MarketSignal uses weighted consumer activities to calculate product demand.
+
+| Consumer Signal | Weight |
+|---|---:|
+| Search | 1 |
+| Product View | 2 |
+| Wishlist | 4 |
+| Price Alert | 5 |
+| Interest | 7 |
+
+## Demand Score
+
+```text
 Demand Score =
 (Search × 1)
 + (Views × 2)
 + (Wishlists × 4)
 + (Price Alerts × 5)
 + (Interests × 7)
-Actions with stronger consumer intent receive higher weights.
-For example:
-100 Searches
-50 Views
-20 Wishlists
-10 Price Alerts
-5 Interests
+
+Example
+Searches       = 100
+Views          = 50
+Wishlists      = 20
+Price Alerts   = 10
+Interests      = 5
 
 Demand Score =
 (100 × 1)
@@ -85,73 +125,88 @@ Demand Score =
 + (10 × 5)
 + (5 × 7)
 
-Demand Score = 480
+= 480
+
+Higher-intent actions receive higher weights.
 📊 Growth Calculation
 MarketSignal compares current demand with previous demand.
 Growth % =
 ((Current Demand - Previous Demand) / Previous Demand) × 100
-The system handles cases where previous demand is zero separately to prevent invalid values such as:
+
+The application handles cases where previous demand is zero separately to avoid invalid values such as:
 NaN
 Infinity
+
 📈 Trend Classification
-MarketSignal classifies product trends based on demand growth.
+Products are classified based on demand growth.
 Growth >= 25%
         ↓
      Rising
+
 
 -25% to +25%
         ↓
      Stable
 
+
 Growth <= -25%
         ↓
    Declining
-This helps users understand whether demand for a product is increasing, stable, or decreasing.
+
+This classification helps users understand whether product interest is increasing, stable, or decreasing.
 🧠 How MarketSignal Works
-                    Consumer Activity
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-       Searches          Views          Wishlists
-          │                │                │
-          └────────────────┼────────────────┘
-                           │
-                     Price Alerts
-                           │
-                        Interests
-                           │
-                           ▼
-                  Demand Signal Engine
-                           │
-                           ▼
-                    Demand Score
-                           │
-              ┌────────────┴────────────┐
-              │                         │
-        Growth Analysis          Trend Analysis
-              │                         │
-              └────────────┬────────────┘
-                           │
-                           ▼
-                 Market Intelligence
-                           │
-             ┌─────────────┼─────────────┐
-             │             │             │
-          Consumer       Seller        Admin
-           Insights     Insights      Analytics
-                           │
-                           ▼
-                      Gemini AI
-                  Optional AI Layer
+Consumer Activity
+       │
+       ├── Searches
+       ├── Product Views
+       ├── Wishlists
+       ├── Price Alerts
+       └── Interest Requests
+                │
+                ▼
+       Demand Signal Engine
+                │
+                ▼
+          Demand Score
+                │
+        ┌───────┴────────┐
+        ▼                ▼
+   Growth Analysis   Trend Analysis
+        │                │
+        └───────┬────────┘
+                ▼
+       Market Intelligence
+          │      │      │
+          ▼      ▼      ▼
+      Consumer Seller  Admin
+       Insights Insights Analytics
+                │
+                ▼
+          Gemini AI
+       Optional AI Layer
+
+🤖 AI Features
+MarketSignal integrates Google Gemini API through the backend.
+Gemini can provide:
+- Product demand explanations
+- Market insights
+- Trend explanations
+- Seller opportunity analysis
+- Consumer questions
+- Market reports
+Important
+Gemini is an optional analysis layer.
+The core Demand Score and Trend calculations are performed by the application's own logic.
+Therefore, the main application can continue working even if the Gemini API is unavailable.
 🏗️ Technology Stack
 Frontend
 - React.js
+- JavaScript
 - Vite
 - React Router
 - Axios
 - Tailwind CSS
 - Recharts
-- JavaScript
 Backend
 - Node.js
 - Express.js
@@ -161,18 +216,42 @@ Backend
 - JWT
 - bcrypt
 - Multer
-- Local product image uploads
+- REST APIs
 AI
 - Google Gemini API
 - Backend-only AI integration
 - Configurable Gemini model
-- AI fallback support
-Development Tools
+- Gemini fallback support
+Development & Deployment
 - VS Code
 - Git
 - GitHub
 - MongoDB Atlas
 - Vercel
+🖼️ Image Upload
+MarketSignal does not require Cloudinary.
+Product images are handled using Multer.
+For local development, uploaded images are stored in:
+backend/uploads/products/
+
+The backend serves uploaded images through:
+/uploads
+
+Example:
+/uploads/products/product-123.png
+
+The image path is stored with the product information in MongoDB.
+Image Upload Rules
+- JPEG allowed
+- PNG allowed
+- WebP allowed
+- Maximum file size: 2 MB
+- Image upload is optional
+Products can still be created and updated without an image.
+Vercel Note
+The local filesystem used for uploads is suitable for local development and self-hosted servers.
+Vercel serverless filesystems are ephemeral, so locally uploaded files are not guaranteed to persist on Vercel.
+The core MarketSignal application does not depend on product images and continues to work without them.
 📁 Project Structure
 MarketSignal/
 │
@@ -184,12 +263,15 @@ MarketSignal/
 │   ├── .env.example
 │   ├── package.json
 │   │
+│   ├── uploads/
+│   │   └── products/
+│   │
 │   └── src/
 │       ├── app.js
 │       ├── server.js
 │       │
 │       ├── config/
-│       │   ├── db.js
+│       │   └── db.js
 │       │
 │       ├── controllers/
 │       │   ├── adminController.js
@@ -307,17 +389,24 @@ MarketSignal/
             ├── calculateGrowth.js
             ├── formatDate.js
             └── formatPrice.js
+
 ⚙️ Installation & Setup
-1. Clone the Repository
+1. Clone Repository
 git clone https://github.com/ayushpandey28/MarketSignal.git
+
 cd MarketSignal
+
 2. Backend Setup
-Open the backend folder:
+Open the backend:
 cd backend
+
 Install dependencies:
 npm install
-Create a .env file inside the backend folder.
-Example:
+
+Create:
+backend/.env
+
+Add:
 PORT=5000
 
 MONGO_URI=your_mongodb_connection_string
@@ -327,55 +416,65 @@ JWT_SECRET=your_jwt_secret
 GEMINI_API_KEY=your_gemini_api_key
 
 GEMINI_MODEL=your_available_gemini_model
+
+FRONTEND_URL=http://localhost:5173
+
 Start the backend:
 npm run dev
-Backend:
+
+Backend runs at:
 http://localhost:5000
-🌐 Live Deployment
-Frontend
-https://market-signal-twentyeight.vercel.app
-Backend API
-https://market-signal-backend.vercel.app
-Health Check
-https://market-signal-backend.vercel.app/api/health
+
+Health check:
+http://localhost:5000/api/health
+
 3. Frontend Setup
 Open another terminal.
 cd frontend
+
 Install dependencies:
 npm install
+
 Create:
 frontend/.env
-Example:
+
+Add:
 VITE_API_URL=http://localhost:5000/api
+
 Start the frontend:
 npm run dev
-Frontend will normally run on:
+
+Frontend normally runs at:
 http://localhost:5173
-Product images use simple local Multer storage in backend/uploads/products and are served through /uploads. No Cloudinary or other external image-storage service is required. Local/self-hosted deployments can persist uploaded files on disk. Vercel serverless filesystems are ephemeral, so uploaded files are not guaranteed to persist there. Product creation and updates continue to work without an image.
-🖼️ Image Upload
-MarketSignal does not require Cloudinary.
-Product images are handled with Multer and stored locally at:
-backend/uploads/products/
-The backend serves these files through /uploads. Image upload is optional, so products can be created and updated without an image.
-For Vercel/serverless deployment, local uploaded files are ephemeral and are not guaranteed to persist. The core application remains functional without product images.
+
+If port 5173 is already occupied, Vite may automatically use another port such as:
+http://localhost:5174
+
+Make sure the backend CORS configuration allows the frontend origin being used.
 🔐 Environment Variables
-Do not commit real environment variables to GitHub.
-The project uses .gitignore to ignore:
+Never commit real secrets to GitHub.
+The project uses:
 .env
-Example environment files should contain placeholders only:
+
+in .gitignore.
+Use:
 backend/.env.example
 frontend/.env.example
+
+for placeholder values.
 Never expose:
-- MongoDB connection credentials
+- MongoDB connection string
 - JWT secret
 - Gemini API key
-- Other private secrets
 - Passwords
 - Authentication secrets
-Gemini API requests are handled by the backend.
-The frontend should never contain the Gemini API key.
+- Other private credentials
+The Gemini API key must remain on the backend.
+The frontend should never contain:
+GEMINI_API_KEY
+
 👥 User Roles
-MarketSignal supports three main user roles.
+MarketSignal has three primary user roles.
 Consumer
 Consumers interact with products and generate demand signals.
 Search
@@ -387,52 +486,57 @@ Wishlist
 Price Alert
    ↓
 Interest
-These activities contribute to the product's Demand Score.
+   ↓
+Demand Score
+
 Seller
-Sellers can use MarketSignal to understand product demand and market opportunities.
-Seller features include:
-- Demand signals
-- Trending products
-- Regional demand
-- Category demand
-- Growth information
-- Inventory management
-- Market opportunities
-- AI market analysis
+Sellers use demand information to understand product interest and market opportunities.
+Products
+   ↓
+Consumer Signals
+   ↓
+Demand Score
+   ↓
+Growth
+   ↓
+Trend
+   ↓
+Market Opportunity
+
 Admin
-Administrators can manage and monitor the platform.
-Admin features include:
-- User management
-- Product management
-- Category management
-- Platform analytics
-- Demand monitoring
+Administrators manage and monitor the platform.
+Users
+Products
+Categories
+Demand Signals
+Analytics
+
 🌍 Regional Demand
 MarketSignal supports regional demand analysis.
-The system can analyze demand based on:
-Country / Region
-       ↓
+The system can analyze:
+Region
+   ↓
 Category
-       ↓
+   ↓
 Product
-       ↓
+   ↓
 Consumer Signals
-       ↓
+   ↓
 Demand Score
-This allows sellers and administrators to understand where consumer interest is increasing.
+
+This allows sellers and administrators to understand where product interest is increasing.
 📊 Analytics
-MarketSignal uses charts and visualizations to display market information.
-Analytics include:
+MarketSignal provides analytics for:
 - Demand trends
 - Regional demand
 - Category demand
-- Growth percentage
 - Product demand
+- Growth percentage
+- Trending products
 - Seller statistics
 - Market opportunities
-Charts are implemented using Recharts.
+Charts and visualizations are implemented using Recharts.
 🤖 AI Architecture
-AI is separated from the core demand calculation system.
 User
  │
  ▼
@@ -446,43 +550,21 @@ Gemini Service
  │
  ▼
 Gemini API
-AI is optional.
-If the Gemini API is unavailable:
-AI unavailable
-      │
-      ▼
-Core application continues
-      │
-      ├── Authentication
-      ├── Products
-      ├── Wishlist
-      ├── Price Alerts
-      ├── Demand Score
-      ├── Analytics
-      └── Seller Features
-This makes the application less dependent on external AI services.
-🧩 Architecture
-React + Vite Frontend
-        │
-        ▼
-   Express REST API
-        │
-   ┌────┴─────┐
-   ▼          ▼
-MongoDB     Multer
- Atlas      Local Uploads
-   │          │
-   └────┬─────┘
-        ▼
- Demand Signal Engine
-        │
-        ▼
-   Gemini AI Layer
-The core Demand Score, growth, and trend calculations are handled by the application itself. Gemini is an optional AI analysis layer.
-🛡️ Security
-MarketSignal implements basic application security practices including:
+
+Gemini is an optional AI layer.
+If Gemini is unavailable, the core application continues to work:
+Authentication
+Products
+Wishlist
+Price Alerts
+Demand Score
+Analytics
+Seller Features
+
+🔒 Security
+MarketSignal implements basic security practices including:
 - JWT authentication
-- Password hashing using bcrypt
+- Password hashing with bcrypt
 - Protected routes
 - Role-based authorization
 - Environment variables
@@ -490,46 +572,46 @@ MarketSignal implements basic application security practices including:
 - Error handling middleware
 - Authentication middleware
 - Input validation
+- CORS configuration
 🧪 Development Commands
 Backend
 cd backend
 npm install
 npm run dev
+
 Frontend
 cd frontend
 npm install
 npm run dev
-Production Build
+
+Frontend Production Build
 cd frontend
 npm run build
+
 🎯 Project Objective
 The main objective of MarketSignal is to identify early consumer demand signals before they become obvious through traditional sales data.
-The platform follows this basic flow:
-Consumer Searches
-        ↓
-Product Views
-        ↓
-Wishlists
-        ↓
-Price Alerts
-        ↓
-Interest Requests
-        ↓
+The application follows:
+Consumer Activity
+       ↓
+Demand Signals
+       ↓
 Demand Score
-        ↓
+       ↓
 Growth Analysis
-        ↓
+       ↓
 Trend Detection
-        ↓
+       ↓
 Market Intelligence
-The resulting information can help users understand which products are receiving increasing consumer attention.
+
+The platform is designed to help users understand which products are receiving increasing consumer attention.
 💡 Example
-Suppose a product receives the following activity:
+Suppose a product receives:
 Searches       = 100
 Views          = 50
 Wishlists      = 20
 Price Alerts   = 10
 Interests      = 5
+
 The Demand Score becomes:
 (100 × 1)
 + (50 × 2)
@@ -538,10 +620,11 @@ The Demand Score becomes:
 + (5 × 7)
 
 = 480
-This score represents the weighted consumer activity for that product.
-It should be treated as a demand signal rather than a guaranteed prediction of future sales.
+
+This score represents weighted consumer activity.
+It is a demand signal, not a guaranteed prediction of future sales.
 🔮 Future Improvements
-Possible future improvements include:
+Possible future improvements:
 - Real-time market data integration
 - Advanced demand forecasting
 - Time-series forecasting
@@ -563,6 +646,7 @@ This project provides practical experience with:
 - Express.js
 - REST APIs
 - MongoDB
+- MongoDB Atlas
 - Mongoose
 - JWT authentication
 - bcrypt
@@ -570,17 +654,18 @@ This project provides practical experience with:
 - Role-based authorization
 - Demand scoring algorithms
 - Data visualization
-- AI API integration
-- Gemini API
+- Gemini API integration
+- Multer file uploads
 - Environment variables
 - Git
 - GitHub
+- Vercel
 - Responsive UI development
 - Frontend-backend integration
 👨‍💻 Author
 Ayush Pandey
 B.Tech Computer Science & Engineering
-Technologies
+Tech Stack
 C++
 JavaScript
 React.js
@@ -591,8 +676,11 @@ REST APIs
 Git
 GitHub
 AI Integration
+
 ⭐ Project
-If you find MarketSignal useful or interesting, consider giving the repository a star ⭐.
+If you find MarketSignal useful or interesting, consider giving the repository a star ⭐
+GitHub:
+https://github.com/ayushpandey28/MarketSignal
 📌 Disclaimer
 MarketSignal is a student/development project designed to demonstrate consumer demand intelligence using activity-based signals.
 Demand scores and trends are analytical indicators and should not be interpreted as guaranteed sales predictions or financial advice.
