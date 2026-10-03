@@ -12,7 +12,7 @@ Instead of relying only on completed sales, MarketSignal uses early consumer sig
 - Price Alerts
 - Interest Requests
 
-These signals are converted into a **Demand Score**, **Growth Percentage**, and **Trend Classification** to help consumers, sellers, and administrators understand changing product interest.
+These signals are converted into a **Demand Score**, **Growth Percentage**, and **Trend Classification** to help consumers, sellers, and administrators understand changing product interest..
 
 ---
 
