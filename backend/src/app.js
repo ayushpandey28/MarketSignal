@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
+
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const signalRoutes = require('./routes/signalRoutes');
@@ -11,52 +10,87 @@ const alertRoutes = require('./routes/alertRoutes');
 const sellerRoutes = require('./routes/sellerRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+
 const { connectDb } = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
+
 app.set('trust proxy', 1);
 
-const uploadsDir = path.join(__dirname, '../uploads/products');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+// =========================
+// CORS CONFIGURATION
+// =========================
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL && process.env.FRONTEND_URL.replace(/\/+$/, ''),
+  process.env.FRONTEND_URL &&
+    process.env.FRONTEND_URL.replace(/\/+$/, ''),
+
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
   'http://127.0.0.1:5174',
+
   'https://market-signal-twentyeight.vercel.app',
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      const cleanOrigin = origin.replace(/\/+$/, '');
-      if (allowedOrigins.includes(cleanOrigin)) return callback(null, true);
+      // Allow requests without an Origin header
+      if (!origin) {
+        return callback(null, true);
+      }
 
+      const cleanOrigin = origin.replace(/\/+$/, '');
+
+      // Allow known origins
+      if (allowedOrigins.includes(cleanOrigin)) {
+        return callback(null, true);
+      }
+
+      // Allow Vercel preview deployments
       try {
         const url = new URL(cleanOrigin);
+
         if (url.hostname.endsWith('.vercel.app')) {
           return callback(null, true);
         }
-      } catch {
-        // ignore invalid URL
+      } catch (error) {
+        // Invalid origin
       }
 
-      callback(new Error('Origin is not allowed by CORS'));
+      return callback(
+        new Error('Origin is not allowed by CORS')
+      );
     },
+
     credentials: true,
   })
 );
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// =========================
+// BODY PARSING
+// =========================
+
 app.use(express.json({ limit: '1mb' }));
+
+// =========================
+// HEALTH CHECK
+// =========================
+
 app.get('/api/health', (_req, res) => {
-  res.json({ success: true, data: { status: 'ok' } });
+  res.json({
+    success: true,
+    data: {
+      status: 'ok',
+    },
+  });
 });
+
+// =========================
+// DATABASE CONNECTION
+// =========================
 
 app.use('/api', async (req, res, next) => {
   try {
@@ -67,17 +101,34 @@ app.use('/api', async (req, res, next) => {
   }
 });
 
+// =========================
+// API ROUTES
+// =========================
+
 app.use('/api/auth', authRoutes);
+
 app.use('/api/products', productRoutes);
+
 app.use('/api/signals', signalRoutes);
+
 app.use('/api/demand', demandRoutes);
+
 app.use('/api/wishlist', wishlistRoutes);
+
 app.use('/api/alerts', alertRoutes);
+
 app.use('/api/seller', sellerRoutes);
+
 app.use('/api/ai', aiRoutes);
+
 app.use('/api/admin', adminRoutes);
 
+// =========================
+// ERROR HANDLING
+// =========================
+
 app.use(notFound);
+
 app.use(errorHandler);
 
 module.exports = app;
