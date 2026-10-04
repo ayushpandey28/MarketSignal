@@ -7,6 +7,7 @@ const PriceAlert = require('../models/PriceAlert');
 const DemandSignal = require('../models/DemandSignal');
 const { asyncHandler } = require('../middleware/errorMiddleware');
 const { refreshProductDemand } = require('../services/demandEngine');
+const { isCloudinaryConfigured, uploadToCloudinary } = require('../config/cloudinary');
 
 function validateProductId(id) {
   if (!mongoose.isValidObjectId(id)) {
@@ -139,7 +140,22 @@ exports.createProduct = asyncHandler(async (req, res) => {
     throw error;
   }
 
-  const imageUrl = req.file ? `/uploads/products/${req.file.filename}` : '';
+  let imageUrl = '';
+  if (req.file) {
+    if (isCloudinaryConfigured()) {
+      try {
+        imageUrl = await uploadToCloudinary(req.file.path);
+      } catch (uploadError) {
+        console.error('[Cloudinary upload failed, falling back to local]', uploadError.message);
+        imageUrl = `/uploads/products/${req.file.filename}`;
+      }
+    } else {
+      imageUrl = `/uploads/products/${req.file.filename}`;
+    }
+  } else if (typeof req.body.imageUrl === 'string' && req.body.imageUrl.trim()) {
+    imageUrl = req.body.imageUrl.trim();
+  }
+
   const payload = {
     name,
     description: req.body.description,
@@ -228,15 +244,30 @@ exports.updateProduct = asyncHandler(async (req, res) => {
     }
     product.stock = stock;
   }
-  if (req.file) product.imageUrl = `/uploads/products/${req.file.filename}`;
+  if (req.file) {
+    if (isCloudinaryConfigured()) {
+      try {
+        product.imageUrl = await uploadToCloudinary(req.file.path);
+      } catch (uploadError) {
+        console.error('[Cloudinary upload failed, falling back to local]', uploadError.message);
+        product.imageUrl = `/uploads/products/${req.file.filename}`;
+      }
+    } else {
+      product.imageUrl = `/uploads/products/${req.file.filename}`;
+    }
+  } else if (req.body.imageUrl !== undefined && typeof req.body.imageUrl === 'string') {
+    product.imageUrl = req.body.imageUrl.trim();
+  }
 
   await product.save();
 
-  await Inventory.findOneAndUpdate(
-    { productId: product._id },
-    { stock: product.stock, price: product.price },
-    { new: true }
-  );
+  if (product.seller) {
+    await Inventory.findOneAndUpdate(
+      { productId: product._id },
+      { sellerId: product.seller, stock: product.stock, price: product.price },
+      { upsert: true, new: true }
+    );
+  }
 
   if (product.price < previousPrice) {
     await PriceAlert.updateMany(
@@ -281,6 +312,6 @@ exports.deleteProduct = asyncHandler(async (req, res) => {
 });
 
 exports.listCategories = asyncHandler(async (req, res) => {
-  const categories = await Product.distinct('category', { isActive: true });
+  const categories = await Product.distinct('category');
   res.json({ success: true, data: categories.sort() });
 });

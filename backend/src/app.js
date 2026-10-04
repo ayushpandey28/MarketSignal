@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
 const signalRoutes = require('./routes/signalRoutes');
@@ -15,8 +16,14 @@ const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 app.set('trust proxy', 1);
+
+const uploadsDir = path.join(__dirname, '../uploads/products');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 const allowedOrigins = [
-  process.env.FRONTEND_URL,
+  process.env.FRONTEND_URL && process.env.FRONTEND_URL.replace(/\/+$/, ''),
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
@@ -27,7 +34,19 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      if (!origin) return callback(null, true);
+      const cleanOrigin = origin.replace(/\/+$/, '');
+      if (allowedOrigins.includes(cleanOrigin)) return callback(null, true);
+
+      try {
+        const url = new URL(cleanOrigin);
+        if (url.hostname.endsWith('.vercel.app')) {
+          return callback(null, true);
+        }
+      } catch {
+        // ignore invalid URL
+      }
+
       callback(new Error('Origin is not allowed by CORS'));
     },
     credentials: true,
