@@ -12,7 +12,10 @@ const aiRoutes = require('./routes/aiRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const { connectDb } = require('./config/db');
-const { notFound, errorHandler } = require('./middleware/errorMiddleware');
+const {
+  notFound,
+  errorHandler,
+} = require('./middleware/errorMiddleware');
 
 const app = express();
 
@@ -57,7 +60,7 @@ app.use(
           return callback(null, true);
         }
       } catch (error) {
-        // Invalid origin
+        // Ignore invalid origins
       }
 
       return callback(
@@ -73,7 +76,11 @@ app.use(
 // BODY PARSING
 // =========================
 
-app.use(express.json({ limit: '1mb' }));
+app.use(
+  express.json({
+    limit: '1mb',
+  })
+);
 
 // =========================
 // HEALTH CHECK
