@@ -650,11 +650,17 @@ select.input {
 }
 .seller-product-image,
 .seller-product-image-placeholder {
+  /* Fixed sidebar: 7rem wide, stretches to full card height */
   flex: 0 0 7rem;
   width: 7rem;
-  min-height: 100%;
+  /* Override .product-image { height: 100% } — use align-self stretch instead */
+  height: auto;
+  min-height: 0;
+  align-self: stretch;
   object-fit: cover;
   background: rgba(56, 189, 248, 0.08);
+  /* Prevent the image's intrinsic size from inflating the card */
+  overflow: hidden;
 }
 .seller-product-image-placeholder {
   display: grid;
