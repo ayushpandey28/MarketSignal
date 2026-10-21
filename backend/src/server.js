@@ -1,10 +1,7 @@
 require('dotenv').config();
-
 const { connectDb } = require('./config/db');
 const app = require('./app');
-
 const port = process.env.PORT || 5000;
-
 function startServer() {
   connectDb()
     .then(() => {
@@ -17,5 +14,4 @@ function startServer() {
       setTimeout(startServer, 5000);
     });
 }
-
 startServer();
